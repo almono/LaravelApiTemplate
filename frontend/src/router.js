@@ -21,7 +21,7 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
   const authStore = useAuthStore();
-  //await authStore.fetchUser();
+  await authStore.fetchUser();
   if (to.meta.requiresAuth && !authStore.user) {
     return '/login';
   }

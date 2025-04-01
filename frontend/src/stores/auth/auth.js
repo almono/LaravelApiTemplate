@@ -16,9 +16,8 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async fetchUser() {
-      console.log("USER")
       try {
-        const response = await api.get('/user');
+        const response = await api.get('/api/auth/user', { withCredentials: true });
         this.user = response.data;
       } catch {
         this.user = null;
