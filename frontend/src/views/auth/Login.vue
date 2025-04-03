@@ -7,7 +7,7 @@
       img-top
       tag="article"
       style="max-width: 25rem"
-      class="mx-auto my-auto text-left d-flex align-center justify-cente"
+      class="mx-auto my-auto text-left d-flex align-center justify-center login-card"
     >
       <BForm @submit.prevent="loginUser()">
         <BCardText class="align-right mt-4">
@@ -20,23 +20,28 @@
             required
             autofocus
           />
-          <span class="text-red-700 font-bold error-msg" v-if="validationErrors?.email">{{ validationErrors.email[0] }}</span>
+          <span class="text-red-700 font-bold error-msg" v-if="validationErrors?.email">{{ validationErrors.email[0] }}</span>          
 
-          <BFormInput
-            id="input-2"
-            v-model="password"
-            type="password"
-            placeholder="Enter password"
-            class="login-input mt-3 px-2"
-            required
-          />
-          <span class="text-blue-500 font-bold forgot-password mt-1">Forgot Password?</span>
+          <BInputGroup class="mt-3">
+            <template #append>
+              <BInputGroupText class="pass-append">
+                <i id="forgot-pass-eye" :class="showPassword === false ? 'bi bi-eye-slash' : 'bi bi-eye-fill'" @click="togglePassword()"></i>
+              </BInputGroupText>
+            </template>
+            <BFormInput
+              id="input-2"
+              v-model="password"
+              :type="showPassword === false ? 'password' : 'text'"
+              placeholder="Enter password"
+              class="login-input px-2"
+              required
+            />
+          </BInputGroup>
           <span class="text-red-700 font-bold error-msg" v-if="validationErrors?.password">{{ validationErrors.password[0] }}</span>
-
         </BCardText>
 
-        <div class="text-red-700 row mx-0 d-flex">
-          <!--<span class="col-12 text-center mt-1 mb-2">Invalid login credentials provided</span>-->
+        <div class="row mx-0 d-flex" v-if="loginError">
+          <span class="col-12 text-center invalid-login-text">Invalid login credentials provided</span>
         </div>
         <div class="col-12 px-0 text-center align-items-center justify-content-center mt-3">
           <BButton class="col-8" pill variant="primary" type="submit" v-if="!requestProcessing">Sign In</BButton>
@@ -44,7 +49,7 @@
         </div>
         <span class="col-12 px-0 justify-content-center d-flex my-2 or-span">or</span>
         <div class="col-12 px-0 text-center">
-          <BButton class="col-6" pill variant="outline-secondary">Register</BButton>
+          <BButton class="col-6" type="button" pill variant="outline-secondary" @click="goToRegistration()">Register</BButton>
         </div>
       </BForm>
     </BCard>
@@ -52,7 +57,7 @@
 </template>
 
 <script>
-import { BButton, BForm, BFormGroup, BFormInput } from 'bootstrap-vue-next';
+import { BButton, BForm, BFormGroup, BFormInput, BInputGroup, BInputGroupText } from 'bootstrap-vue-next';
 import { useAuthStore } from '../../stores/auth/auth'
 import { useToast } from "vue-toastification";
 
@@ -68,7 +73,8 @@ export default {
       password: null,
       requestProcessing: false,
       validationErrors: null,
-      loginError: null
+      loginError: null,
+      showPassword: false
     }
   },
   methods: {
@@ -81,7 +87,6 @@ export default {
         password: this.password
       }).then(response => {
         this.requestProcessing = false
-        console.log(response)
         
       }, this).catch(error => {
         if (error.response.status === 422) {
@@ -90,9 +95,15 @@ export default {
 
         if (error.status === 401) {
           this.loginError = error.response?.data?.message
-          useToast().error(this.loginError)
+          //useToast().error(this.loginError)
         }
       })
+    },
+    togglePassword() {
+      this.showPassword = !this.showPassword
+    },
+    goToRegistration() {
+      this.$router.push({path: '/register'})
     }
   }
 };
@@ -151,8 +162,27 @@ h2 {
   margin-left: 10px;
 }
 
+.invalid-login-text {
+  color: red;
+  font-size: 12px;
+  font-weight: 600;
+}
+
 .card-body > h4 {
   font-size: 30px !important;
+}
+
+.login-card {
+  box-shadow: 3px 3px 3px rgba(201, 201, 201, 0.438);
+}
+
+#forgot-pass-eye {
+  color: rgb(0, 121, 177) !important;
+  font-size: 20px;
+}
+
+.pass-append {
+  height: 3rem;
 }
 </style>
   
