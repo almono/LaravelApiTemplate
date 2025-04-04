@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Controller;
 use App\Events\UserRegistered;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\UserRegisterRequest;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\Response;
+use Illuminate\Auth\Events\Registered;
 
 class AuthController extends Controller
 {
@@ -124,7 +126,7 @@ class AuthController extends Controller
 
         if($user) {
             $token = $this->userService->createUserToken($user);
-            event(new UserRegistered($user)); // Dispatch event
+            event(new Registered($user)); // Dispatch registered event
 
             return response()->json([
                 'message' => 'Successfully created user!',

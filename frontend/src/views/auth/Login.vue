@@ -89,7 +89,7 @@ export default {
         this.requestProcessing = false
         
       }, this).catch(error => {
-        if (error.response.status === 422) {
+        if (error.status === 422) {
           this.validationErrors = error.response.data.errors
         }
 
