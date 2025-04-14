@@ -11,15 +11,10 @@ export const useAuthStore = defineStore('auth', {
       await api.get('/sanctum/csrf-cookie') // CSRF protection
       
       const response = await api.post('/api/auth/login', credentials)
-console.log(response.status)
-console.log(response)
+
       if(response.status === 200) {
-        console.log("TEST1")
         this.token = response.data.accessToken
-        console.log("TEST2")
         api.defaults.headers.common["Authorization"] = `Bearer ${this.token}`
-        console.log("TEST3")
-console.log(this.token)
         await this.fetchUser()
       }
     },
