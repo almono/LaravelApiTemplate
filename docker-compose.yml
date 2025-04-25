@@ -12,6 +12,8 @@ services:
     volumes:
       - ./:/var/www
       - ./.env:/var/www/.env
+      - ./storage:/var/www/storage:rw
+      - ./public:/var/www/public
     environment:
       - APP_ENV=local
     networks:
@@ -66,6 +68,9 @@ services:
       - laravel-app-network
 
   frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     image: node:18
     container_name: vue-frontend
     working_dir: /app
